@@ -1,9 +1,7 @@
-package danpoong.mohaeng.Disabled.Repository;
+package danpoong.mohaeng.disabled.repository;
 
-
-
-import danpoong.mohaeng.Disabled.Domain.Disabled;
-import danpoong.mohaeng.Location.Domain.Location;
+import danpoong.mohaeng.disabled.domain.Disabled;
+import danpoong.mohaeng.location.domain.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DisabledRepository extends JpaRepository<Disabled, Long> {

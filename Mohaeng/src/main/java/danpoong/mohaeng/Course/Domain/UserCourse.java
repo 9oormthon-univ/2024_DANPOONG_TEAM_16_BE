@@ -1,8 +1,9 @@
-package danpoong.mohaeng.Course.Domain;
+package danpoong.mohaeng.course.domain;
 
 
-import danpoong.mohaeng.Location.Domain.Location;
+import danpoong.mohaeng.location.domain.Location;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,6 +26,7 @@ public class UserCourse {
     @JoinColumn(name = "content_id")
     private Location location;
 
+    @Builder
     public UserCourse(Course course, Location location) {
         this.course = course;
         this.location = location;

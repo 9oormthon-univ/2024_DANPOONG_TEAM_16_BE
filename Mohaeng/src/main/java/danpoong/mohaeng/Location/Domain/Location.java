@@ -1,11 +1,11 @@
-package danpoong.mohaeng.Location.Domain;
+package danpoong.mohaeng.location.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import danpoong.mohaeng.Area.Domain.Area;
-import danpoong.mohaeng.Course.Domain.UserCourse;
-import danpoong.mohaeng.Disabled.Domain.Disabled;
+import danpoong.mohaeng.area.domain.Area;
+import danpoong.mohaeng.course.domain.UserCourse;
+import danpoong.mohaeng.disabled.domain.Disabled;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

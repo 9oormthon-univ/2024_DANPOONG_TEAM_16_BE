@@ -1,9 +1,8 @@
-package danpoong.mohaeng.Area.Repository;
+package danpoong.mohaeng.area.repository;
 
-
-import danpoong.mohaeng.Area.Domain.Area;
+import danpoong.mohaeng.area.domain.Area;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AreaRepository extends JpaRepository<Area, Long> {
-    Area findByAreaCode(Long areaCode);
+    Area findByNumber(Long number);
 }

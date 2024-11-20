@@ -1,7 +1,6 @@
-package danpoong.mohaeng.Location.Repository;
+package danpoong.mohaeng.location.repository;
 
-
-import danpoong.mohaeng.Location.Domain.Location;
+import danpoong.mohaeng.location.domain.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

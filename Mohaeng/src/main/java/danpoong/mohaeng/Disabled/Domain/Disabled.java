@@ -13,8 +13,8 @@ import lombok.Setter;
 public class Disabled {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // disabled_number는 자동 생성
-    @Column(name = "disabled_number")
-    private Long disabledNumber;  // 장애시설코드
+    @Column(name = "number")
+    private Long number;  // 장애시설코드
 
     @OneToOne
     @JoinColumn(name = "content_id", nullable = false)

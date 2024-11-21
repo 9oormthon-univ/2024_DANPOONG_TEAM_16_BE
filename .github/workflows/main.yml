@@ -50,7 +50,74 @@ jobs:
         run: |
           echo "Copying mohaeng-0.0.1-SNAPSHOT.jar to remote server:"
           ssh -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no root@${{ secrets.NAVER_HOST }} "
-            ls -l /root/Mohaeng/Mohaeng/build/libs/mohaeng-0.0.1-SNAPSHOT.jar
+          name: main
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 소스 코드를 체크아웃합니다.
+      - uses: actions/checkout@v3
+
+      # SSH 개인 키 설정 및 연결 테스트
+      - name: Configure SSH and Test Connection
+        run: |
+          mkdir -p /home/runner/.ssh
+          chmod 700 /home/runner/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > /home/runner/.ssh/mohaeng
+          chmod 600 /home/runner/.ssh/mohaeng
+          ssh-keyscan -H ${{ secrets.NAVER_HOST }} >> /home/runner/.ssh/known_hosts
+          ssh -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no root@${{ secrets.NAVER_HOST }} "echo 'SSH Connection Successful'"
+        shell: bash
+
+      # Java 환경 설정
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # Gradle 빌드
+      - name: Build with Gradle on Remote Server
+        run: |
+          ssh -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no root@${{ secrets.NAVER_HOST }} "
+            cd /root/Mohaeng/Mohaeng &&
+            chmod +x ./gradlew &&
+            ./gradlew clean build
+            chmod 755 /root/Mohaeng/Mohaeng/build/libs/mohaeng-0.0.1-SNAPSHOT.jar
+          "
+        shell: bash
+
+      # 원격 서버 대상 디렉터리 생성
+      - name: Create target directory on remote server
+        run: |
+          ssh -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no root@${{ secrets.NAVER_HOST }} "mkdir -p /root/Mohaeng/cicd/"
+        shell: bash
+
+      # JAR 파일 원격 서버로 복사
+      - name: Copy jar file to remote
+        run: |
+          echo "Copying mohaeng-0.0.1-SNAPSHOT.jar to remote server:"
+          ssh -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no root@${{ secrets.NAVER_HOST }} "
+          cp /root/Mohaeng/Mohaeng/build/libs/mohaeng-0.0.1-SNAPSHOT.jar /root/Mohaeng/cicd/
+          "
+        shell: bash
+
+      # 배포 스크립트 복사
+      - name: Copy deploy script file to remote
+        run: |
+          scp -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no deploy.sh root@${{ secrets.NAVER_HOST }}:/root/Mohaeng/cicd/
+        shell: bash
+
+      # 원격 서버에서 배포 스크립트 실행
+      - name: Execute deploy script
+        run: |
+          ssh -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no root@${{ secrets.NAVER_HOST }} "cd /root/Mohaeng/cicd && PROPERTIES='${{ secrets.PROPERTIES }}' chmod +x deploy.sh && sh deploy.sh"
+        shell: bash
+
           "
           scp -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no /root/Mohaeng/Mohaeng/build/libs/mohaeng-0.0.1-SNAPSHOT.jar root@${{ secrets.NAVER_HOST }}:/root/Mohaeng/cicd/
         shell: bash

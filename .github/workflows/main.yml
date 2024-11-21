@@ -35,7 +35,8 @@ jobs:
 
       # Gradle 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: |
+          ssh -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no root@${{ secrets.NAVER_HOST }} "cd /root/Mohaeng/Mohaeng && chmod +x ./gradlew && ./gradlew clean build"
         working-directory: ./Mohaeng/Mohaeng
 
       # 원격 서버 대상 디렉터리 생성

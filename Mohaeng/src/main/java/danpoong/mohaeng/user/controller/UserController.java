@@ -1,27 +1,19 @@
 package danpoong.mohaeng.user.controller;
 
 import danpoong.mohaeng.user.dto.UserCreateReq;
-import danpoong.mohaeng.user.service.UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-@Controller
-@RequestMapping("/api/v1/user")
-@RequiredArgsConstructor
-public class UserController {
+public interface UserController{
 
-    private final UserService userService;
-
-    @PostMapping("")
-    public ResponseEntity<String> userCreate(@RequestBody UserCreateReq userCreateReq) {
-        if (!userService.createUser(userCreateReq.getUuid()))
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 유저입니다.\n");
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("유저 정보를 생성했습니다.\n");
-    }
+    @Operation(summary = "유저 생성 API", description = "uuid 기반으로 유저 정보를 생성하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "유저 정보를 생성했습니다.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "409", description = "이미 존재하는 유저입니다.", content = @Content(mediaType = "application/json")),
+    })
+    public ResponseEntity<String> userCreate(@RequestBody UserCreateReq userCreateReq);
 }

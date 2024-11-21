@@ -30,12 +30,11 @@ jobs:
 
       # gradlew 파일 실행 권한 부여
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-        working-directory: Mohaeng
+        run: chmod +x ./Mohaeng/Mohaeng/gradlew
 
       # Gradle 빌드
       - name: Build with Gradle
-        run: /gradlew clean build        
+        run: ./gradlew clean build
         working-directory: ./Mohaeng/Mohaeng
 
       # 원격 서버 대상 디렉터리 생성

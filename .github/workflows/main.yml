@@ -28,14 +28,15 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # gradlew 파일 실행 권한 부여
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./Mohaeng/Mohaeng/gradlew
-
       # Gradle 빌드
-      - name: Build with Gradle
-        run: ./gradlew clean build
-        working-directory: ./Mohaeng/Mohaeng
+      - name: Build with Gradle on Remote Server
+        run: |
+          ssh -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no root@${{ secrets.NAVER_HOST }} "
+            cd /root/Mohaeng/Mohaeng &&
+            chmod +x ./gradlew &&
+            ./gradlew clean build
+          "
+        shell: bash
 
       # 원격 서버 대상 디렉터리 생성
       - name: Create target directory on remote server

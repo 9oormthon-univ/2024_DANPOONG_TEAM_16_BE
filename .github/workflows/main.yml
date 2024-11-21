@@ -14,9 +14,11 @@ jobs:
       # SSH 개인 키 설정 및 연결 테스트
       - name: Configure SSH and Test Connection
         run: |
+          mkdir -p /home/runner/.ssh
+          chmod 700 /home/runner/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > /home/runner/.ssh/mohaeng
           chmod 600 /home/runner/.ssh/mohaeng
-          ssh-add /home/runner/.ssh/mohaeng
+          ssh-keyscan -H ${{ secrets.NAVER_HOST }} >> /home/runner/.ssh/known_hosts
           ssh -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no root@${{ secrets.NAVER_HOST }} "echo 'SSH Connection Successful'"
         shell: bash
 
@@ -33,10 +35,8 @@ jobs:
 
       # Gradle 빌드
       - name: Build with Gradle
-        run: |
-          cd Mohaeng/Mohaeng
-          ./gradlew clean build
-        working-directory: Mohaeng
+        run: ./gradlew clean build
+        working-directory: ./Mohaeng/Mohaeng
 
       # 원격 서버 대상 디렉터리 생성
       - name: Create target directory on remote server

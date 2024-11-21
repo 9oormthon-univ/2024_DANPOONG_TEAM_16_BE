@@ -47,7 +47,8 @@ jobs:
       # JAR 파일 원격 서버로 복사
       - name: Copy jar file to remote
         run: |
-          scp -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no ./Mohaeng/Mohaeng/build/libs/*.jar root@${{ secrets.NAVER_HOST }}:/root/Mohaeng/cicd/
+          echo "Copying mohaeng-0.0.1-SNAPSHOT.jar to remote server:"
+          scp -i /home/runner/.ssh/mohaeng -o StrictHostKeyChecking=no ./Mohaeng/Mohaeng/build/libs/mohaeng-0.0.1-SNAPSHOT.jar root@${{ secrets.NAVER_HOST }}:/root/Mohaeng/cicd/
         shell: bash
 
       # 배포 스크립트 복사

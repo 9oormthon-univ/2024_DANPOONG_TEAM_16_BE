@@ -12,12 +12,16 @@ public class UserService {
     private final UserRepository userRepository;
 
     public boolean createUser(String uuid) {
-        if (userRepository.existsByUuid(uuid))
+        if (checkUserExist(uuid))
             return false;
 
         User createUser = new User(uuid);
         userRepository.save(createUser);
 
         return true;
+    }
+
+    public boolean checkUserExist(String uuid) {
+        return userRepository.existsByUuid(uuid);
     }
 }

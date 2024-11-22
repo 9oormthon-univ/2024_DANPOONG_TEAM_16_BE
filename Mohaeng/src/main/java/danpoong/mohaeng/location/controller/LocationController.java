@@ -6,9 +6,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Tag(name = "Location", description = "관광지 관련 API")
 public interface LocationController {
     @Operation(summary = "관광지 상세 정보 조회 API", description = "contentId를 기반으로 관광지 상세 정보를 조회하는 API입니다.")
     @ApiResponses(value = {

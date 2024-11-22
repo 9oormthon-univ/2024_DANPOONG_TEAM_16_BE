@@ -2,7 +2,6 @@ package danpoong.mohaeng.user.controller;
 
 import danpoong.mohaeng.user.dto.UserCreateReq;
 import danpoong.mohaeng.user.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
-@Tag(name = "User", description = "유저 관련 API")
 public class UserControllerImpl implements UserController {
 
     private final UserService userService;

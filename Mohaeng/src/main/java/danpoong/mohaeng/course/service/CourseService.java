@@ -21,8 +21,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -37,6 +39,8 @@ public class CourseService {
     private final UserTripTypeRepository userTripTypeRepository;
     private final UserDisabilityRepository userDisabilityRepository;
     private final CourseRepository courseRepository;
+
+
 
     public CourseCreateRes createTrip(CourseCreateReq courseCreateReq) {
         // 코스 정보 생성
@@ -148,6 +152,18 @@ public class CourseService {
             return false;
         }
         courseRepository.deleteById(courseNumber);
+        return true;
+    }
+
+
+    public  boolean deletedLocationFromCourse(Long courseNumber, Long location) {
+        Optional<UserCourse> userCourse = userCourseRepository.findByCourseNumberAndLocationId(courseNumber, location);
+
+        if (userCourse.isEmpty()) {
+            return false;
+        }
+
+        userCourseRepository.delete(userCourse.get());
         return true;
     }
 }

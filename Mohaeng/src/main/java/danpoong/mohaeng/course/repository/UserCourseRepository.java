@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserCourseRepository extends JpaRepository<UserCourse, Long> {
     UserCourse findUserCourseByCourseAndLocation(Course course, Location location);
@@ -18,4 +19,7 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, Long> {
     @Modifying
     @Query("DELETE FROM UserCourse uc WHERE uc.course.number = :courseId")
     void deleteByCourseId(@Param("courseId") Long courseId);
+
+    @Query("SELECT uc FROM UserCourse uc WHERE uc.course.number = :courseNumber AND uc.location.contentId = :locationId")
+    Optional<UserCourse> findByCourseNumberAndLocationId(@Param("courseNumber") Long courseNumber, @Param("locationId") Long locationId);
 }

@@ -36,4 +36,16 @@ public class CourseControllerImpl implements CourseController{
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PatchMapping("/{course_Number}/location/{location}")
+    public ResponseEntity<Void> deleteLocationFromCourse(
+            @PathVariable Long course_Number,
+            @PathVariable Long location) {
+        boolean isDeleted = courseService.deletedLocationFromCourse(course_Number, location);
+
+        if(!isDeleted){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

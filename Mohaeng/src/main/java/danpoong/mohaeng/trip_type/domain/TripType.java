@@ -1,4 +1,4 @@
-package danpoong.mohaeng.trip_type;
+package danpoong.mohaeng.trip_type.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

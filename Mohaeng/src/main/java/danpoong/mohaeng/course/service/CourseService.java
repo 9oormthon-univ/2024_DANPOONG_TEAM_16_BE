@@ -14,14 +14,19 @@ import danpoong.mohaeng.disability.repository.DisabilityRepository;
 import danpoong.mohaeng.disability.repository.UserDisabilityRepository;
 import danpoong.mohaeng.location.domain.Location;
 import danpoong.mohaeng.location.repository.LocationRepository;
+import danpoong.mohaeng.trip_type.domain.UserTripType;
+import danpoong.mohaeng.trip_type.repository.TripTypeRepository;
+import danpoong.mohaeng.trip_type.repository.UserTripTypeRepository;
 import danpoong.mohaeng.user.domain.User;
 import danpoong.mohaeng.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -32,9 +37,13 @@ public class CourseService {
     private final AreaRepository areaRepository;
     private final LocationRepository locationRepository;
     private final DisabilityRepository disabilityRepository;
+    private final TripTypeRepository tripTypeRepository;
+    private final UserTripTypeRepository userTripTypeRepository;
     private final UserDisabilityRepository userDisabilityRepository;
     private final CourseRepository courseRepository;
     private final AIRecService aiRecService;
+
+
 
     public CourseCreateRes createTrip(CourseCreateReq courseCreateReq) {
         // 코스 정보 생성
@@ -42,6 +51,9 @@ public class CourseService {
 
         // 코스 장애 정보 생성
         createCourseDisability(course, courseCreateReq.getDisability());
+
+        // 코스 여행 타입 정보 생성
+        createCourseTripType(course, courseCreateReq.getTripType());
 
         return crateCourseRes(course, courseCreateReq);
     }
@@ -80,6 +92,18 @@ public class CourseService {
         }
     }
 
+    private void createCourseTripType(Course course, List<Long> tripType) {
+        for (Long tripTypeNum : tripType) {
+            UserTripType userTripType = UserTripType.builder()
+                    .course(course)
+                    .tripType(tripTypeRepository.findTripTypeByNumber(tripTypeNum + 1))
+                    .build();
+
+            userTripTypeRepository.save(userTripType);
+            log.info("코스 여행 정보 : {}", userTripType);
+        }
+    }
+
     private CourseCreateRes crateCourseRes(Course course, CourseCreateReq courseCreateReq) {
         Long day1 = 1L;
         Long day2 = 2L;
@@ -104,7 +128,7 @@ public class CourseService {
 
     private void crateUserCourse(Course course, List<Long> locations, Long day) {
         if (locations == null)
-            return ;
+            return;
 
         for (Long location : locations) {
             UserCourse userCourse = UserCourse.builder()
@@ -132,5 +156,32 @@ public class CourseService {
                 .toList();
 
         return aiRecService.generateCourse(filteredLocation, filteredRestaurant, areaRepository.findByNumber(area).getName(), period);
+
+     public boolean deleteCourseByNum(Long courseNumber) {
+
+        // 순서대로 코스 정보 삭제
+        userDisabilityRepository.deleteByCourseId(courseNumber);
+
+        userTripTypeRepository.deleteByCourseId(courseNumber);
+
+        userCourseRepository.deleteByCourseId(courseNumber);
+
+        if (!courseRepository.existsById(courseNumber)) {
+            return false;
+        }
+        courseRepository.deleteById(courseNumber);
+        return true;
+    }
+
+
+    public  boolean deletedLocationFromCourse(Long courseNumber, Long location) {
+        Optional<UserCourse> userCourse = userCourseRepository.findByCourseNumberAndLocationId(courseNumber, location);
+
+        if (userCourse.isEmpty()) {
+            return false;
+        }
+
+        userCourseRepository.delete(userCourse.get());
+        return true;
     }
 }

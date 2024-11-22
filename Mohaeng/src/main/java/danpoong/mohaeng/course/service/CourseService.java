@@ -4,6 +4,7 @@ import danpoong.mohaeng.area.domain.Area;
 import danpoong.mohaeng.area.repository.AreaRepository;
 import danpoong.mohaeng.course.domain.Course;
 import danpoong.mohaeng.course.domain.UserCourse;
+import danpoong.mohaeng.course.dto.AICourseRes;
 import danpoong.mohaeng.course.dto.CourseCreateReq;
 import danpoong.mohaeng.course.dto.CourseCreateRes;
 import danpoong.mohaeng.course.repository.CourseRepository;
@@ -11,6 +12,7 @@ import danpoong.mohaeng.course.repository.UserCourseRepository;
 import danpoong.mohaeng.disability.domain.UserDisability;
 import danpoong.mohaeng.disability.repository.DisabilityRepository;
 import danpoong.mohaeng.disability.repository.UserDisabilityRepository;
+import danpoong.mohaeng.location.domain.Location;
 import danpoong.mohaeng.location.repository.LocationRepository;
 import danpoong.mohaeng.user.domain.User;
 import danpoong.mohaeng.user.repository.UserRepository;
@@ -32,6 +34,7 @@ public class CourseService {
     private final DisabilityRepository disabilityRepository;
     private final UserDisabilityRepository userDisabilityRepository;
     private final CourseRepository courseRepository;
+    private final AIRecService aiRecService;
 
     public CourseCreateRes createTrip(CourseCreateReq courseCreateReq) {
         // 코스 정보 생성
@@ -113,5 +116,21 @@ public class CourseService {
             userCourseRepository.save(userCourse);
             log.info("코스 관광지 정보 : {}", userCourse.getLocation().getContentTitle());
         }
+    }
+
+    public AICourseRes createAIRecCourse(List<Long> disability, List<Long> tripType, Long area, Long period) {
+
+        // 필터링 된 관광지
+        List<Location> filteredLocation = locationRepository.filterByAreaAndDisabilityAndTravelType(
+                        area, disability, tripType).stream()
+                .limit(80)
+                .toList();
+
+        // 필터링 된 음식점
+        List<Location> filteredRestaurant = locationRepository.filterByAreaAndContentType(area).stream()
+                .limit(80)
+                .toList();
+
+        return aiRecService.generateCourse(filteredLocation, filteredRestaurant, areaRepository.findByNumber(area).getName(), period);
     }
 }

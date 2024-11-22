@@ -121,7 +121,7 @@ public class CourseService {
 
     private void crateUserCourse(Course course, List<Long> locations, Long day) {
         if (locations == null)
-            return ;
+            return;
 
         for (Long location : locations) {
             UserCourse userCourse = UserCourse.builder()
@@ -133,5 +133,21 @@ public class CourseService {
             userCourseRepository.save(userCourse);
             log.info("코스 관광지 정보 : {}", userCourse.getLocation().getContentTitle());
         }
+    }
+
+    public boolean deleteCourseByNum(Long courseNumber) {
+
+        // 순서대로 코스 정보 삭제
+        userDisabilityRepository.deleteByCourseId(courseNumber);
+
+        userTripTypeRepository.deleteByCourseId(courseNumber);
+
+        userCourseRepository.deleteByCourseId(courseNumber);
+
+        if (!courseRepository.existsById(courseNumber)) {
+            return false;
+        }
+        courseRepository.deleteById(courseNumber);
+        return true;
     }
 }

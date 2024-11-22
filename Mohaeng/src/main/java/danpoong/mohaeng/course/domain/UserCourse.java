@@ -18,6 +18,9 @@ public class UserCourse {
     @Column(name = "user_course_number")
     private Long userCourseNumber;
 
+    @Column(name = "day")
+    private Long day;
+
     @ManyToOne
     @JoinColumn(name = "course_number")
     private Course course;
@@ -27,7 +30,8 @@ public class UserCourse {
     private Location location;
 
     @Builder
-    public UserCourse(Course course, Location location) {
+    public UserCourse(Long day, Course course, Location location) {
+        this.day = day;
         this.course = course;
         this.location = location;
     }

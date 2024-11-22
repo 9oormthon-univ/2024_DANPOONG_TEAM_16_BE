@@ -1,17 +1,17 @@
 package danpoong.mohaeng.disability.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
+@Entity
+@Table(name = "disability")
 @Getter
-@RequiredArgsConstructor
-public enum Disability {
-    SENIOR("senior"),
-    WHEELCHAIR("wheelchair"),
-    BLIND("blind"),
-    HEARING("hearing"),
-    INFANTS("infants"),
-    NONE("none");
+public class Disability {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "number")
+    private Long number;
 
-    private final String name;
+    @Column(name = "name")
+    private String name;
 }

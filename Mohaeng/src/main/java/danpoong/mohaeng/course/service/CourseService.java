@@ -159,7 +159,7 @@ public class CourseService {
                 .toList();
 
         return aiRecService.generateCourse(filteredLocation, filteredRestaurant, areaRepository.findByNumber(area).getName(), period);
-
+    }
      public boolean deleteCourseByNum(Long courseNumber) {
 
         // 순서대로 코스 정보 삭제

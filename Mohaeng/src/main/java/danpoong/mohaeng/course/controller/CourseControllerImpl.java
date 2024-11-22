@@ -37,6 +37,7 @@ public class CourseControllerImpl implements CourseController{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(aiCourseRes);
+    }
 
     @DeleteMapping("/{course_Number}")
     public ResponseEntity<Void> courseDelete(@PathVariable Long course_Number){

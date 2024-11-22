@@ -13,7 +13,7 @@ import lombok.Setter;
 public class Disabled {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // disabled_number는 자동 생성
-    @Column(name = "number")
+    @Column(name = "disabled_number")
     private Long number;  // 장애시설코드
 
     @OneToOne

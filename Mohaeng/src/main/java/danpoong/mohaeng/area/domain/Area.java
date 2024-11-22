@@ -16,7 +16,7 @@ import lombok.Setter;
 @Getter @Setter
 public class Area {
     @Id
-    @Column(name = "number")
+    @Column(name = "area_code")
     private Long number;
 
     @Column(name = "name")

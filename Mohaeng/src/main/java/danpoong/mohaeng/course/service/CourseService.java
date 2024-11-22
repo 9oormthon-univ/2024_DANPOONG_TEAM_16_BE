@@ -19,10 +19,8 @@ import danpoong.mohaeng.user.domain.User;
 import danpoong.mohaeng.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
 
 import java.time.LocalDate;
 import java.util.List;

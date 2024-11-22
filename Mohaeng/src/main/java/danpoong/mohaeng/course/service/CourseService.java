@@ -12,6 +12,9 @@ import danpoong.mohaeng.disability.domain.UserDisability;
 import danpoong.mohaeng.disability.repository.DisabilityRepository;
 import danpoong.mohaeng.disability.repository.UserDisabilityRepository;
 import danpoong.mohaeng.location.repository.LocationRepository;
+import danpoong.mohaeng.trip_type.domain.UserTripType;
+import danpoong.mohaeng.trip_type.repository.TripTypeRepository;
+import danpoong.mohaeng.trip_type.repository.UserTripTypeRepository;
 import danpoong.mohaeng.user.domain.User;
 import danpoong.mohaeng.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,8 @@ public class CourseService {
     private final AreaRepository areaRepository;
     private final LocationRepository locationRepository;
     private final DisabilityRepository disabilityRepository;
+    private final TripTypeRepository tripTypeRepository;
+    private final UserTripTypeRepository userTripTypeRepository;
     private final UserDisabilityRepository userDisabilityRepository;
     private final CourseRepository courseRepository;
 
@@ -39,6 +44,9 @@ public class CourseService {
 
         // 코스 장애 정보 생성
         createCourseDisability(course, courseCreateReq.getDisability());
+
+        // 코스 여행 타입 정보 생성
+        createCourseTripType(course, courseCreateReq.getTripType());
 
         return crateCourseRes(course, courseCreateReq);
     }
@@ -74,6 +82,18 @@ public class CourseService {
 
             userDisabilityRepository.save(userDisability);
             log.info("코스 장애 정보 : {}", userDisability);
+        }
+    }
+
+    private void createCourseTripType(Course course, List<Long> tripType) {
+        for (Long tripTypeNum : tripType) {
+            UserTripType userTripType = UserTripType.builder()
+                    .course(course)
+                    .tripType(tripTypeRepository.findTripTypeByNumber(tripTypeNum + 1))
+                    .build();
+
+            userTripTypeRepository.save(userTripType);
+            log.info("코스 여행 정보 : {}", userTripType);
         }
     }
 

@@ -1,7 +1,6 @@
 package danpoong.mohaeng.disability.domain;
 
 import danpoong.mohaeng.course.domain.Course;
-import danpoong.mohaeng.trip_type.TripType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

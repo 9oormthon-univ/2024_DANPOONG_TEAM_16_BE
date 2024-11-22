@@ -1,10 +1,13 @@
 package danpoong.mohaeng.course.domain;
 
 import danpoong.mohaeng.area.domain.Area;
+import danpoong.mohaeng.disability.domain.UserDisability;
+import danpoong.mohaeng.trip_type.domain.UserTripType;
 import danpoong.mohaeng.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "course")
@@ -42,6 +45,12 @@ public class Course {
     @ManyToOne
     @JoinColumn(name = "area_number")
     private Area area;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserDisability> disabilities;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserTripType> tripTypes;
 
     @Builder
     public Course(String name, Long period, LocalDate startDate, LocalDate endDate, Double gpsX, Double gpsY, User user, Area area) {

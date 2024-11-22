@@ -1,15 +1,11 @@
-package danpoong.mohaeng.trip_type;
+package danpoong.mohaeng.trip_type.domain;
 
 import danpoong.mohaeng.course.domain.Course;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "user_trip_type")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -25,4 +21,10 @@ public class UserTripType {
     @ManyToOne
     @JoinColumn(name = "course_number", nullable = false)
     public Course course;
+
+    @Builder
+    public UserTripType(TripType tripType, Course course) {
+        this.tripType = tripType;
+        this.course = course;
+    }
 }

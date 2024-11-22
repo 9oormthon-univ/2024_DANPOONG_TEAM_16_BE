@@ -18,9 +18,9 @@ public class UserTripType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long number;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "trip_type", nullable = false)
-    private TripType tripType;
+    @ManyToOne
+    @JoinColumn(name = "trip_type_number", nullable = false)
+    public TripType tripType;
 
     @ManyToOne
     @JoinColumn(name = "course_number", nullable = false)

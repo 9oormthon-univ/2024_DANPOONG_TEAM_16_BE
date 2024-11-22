@@ -30,7 +30,7 @@ public class UserControllerImpl implements UserController {
         if (userService.checkUserExist(uuid))
             return ResponseEntity.status(HttpStatus.OK).body("유저가 존재합니다.\n");
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유저가 존재하지 않습니다\n");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유저가 존재하지 않습니다.\n");
     }
 
     @GetMapping("/{uuid}/course")

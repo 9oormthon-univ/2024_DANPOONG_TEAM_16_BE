@@ -7,6 +7,7 @@ import danpoong.mohaeng.course.domain.UserCourse;
 import danpoong.mohaeng.course.dto.AICourseRes;
 import danpoong.mohaeng.course.dto.CourseCreateReq;
 import danpoong.mohaeng.course.dto.CourseCreateRes;
+import danpoong.mohaeng.course.dto.CourseSearchResponse;
 import danpoong.mohaeng.course.repository.CourseRepository;
 import danpoong.mohaeng.course.repository.UserCourseRepository;
 import danpoong.mohaeng.disability.domain.UserDisability;
@@ -26,7 +27,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -184,4 +187,44 @@ public class CourseService {
         userCourseRepository.delete(userCourse.get());
         return true;
     }
+
+    public CourseSearchResponse getCourseDetail(Long courseNumber){
+        Course course = courseRepository.findById(courseNumber)
+                .orElseThrow(() -> new IllegalArgumentException("해당 코스 정보가 없습니다."));
+
+        List<Long> disabilities = course.getDisabilities().stream()
+                .map(disability -> disability.getNumber())
+                .collect(Collectors.toList());
+
+        List<UserCourse> userCourses = userCourseRepository.findByCourseNumber(courseNumber);
+
+
+        Map<Long, List<CourseSearchResponse.LocationInfo>> dayWiseLocations = userCourses.stream()
+                .collect(Collectors.groupingBy(
+                        UserCourse::getDay,
+                        Collectors.mapping(
+                                uc -> CourseSearchResponse.LocationInfo.builder()
+                                        .name(uc.getLocation().getContentTitle())
+                                        .address(uc.getLocation().getAddr())
+                                        .imageUrl(uc.getLocation().getOriginalImage())
+                                        .build(),
+                                Collectors.toList()
+                        )
+                ));
+
+
+        return CourseSearchResponse.builder()
+                .courseNumber(course.getNumber())
+                .courseName(course.getName())
+                .area(course.getArea().getName())
+                .startDate(course.getStartDate())
+                .endDate(course.getEndDate())
+                .period(course.getPeriod())
+                .disability(disabilities)
+                .day1(dayWiseLocations.getOrDefault(1L, List.of()))
+                .day2(dayWiseLocations.getOrDefault(2L, List.of()))
+                .day3(dayWiseLocations.getOrDefault(3L, List.of()))
+                .build();
+    }
+
 }

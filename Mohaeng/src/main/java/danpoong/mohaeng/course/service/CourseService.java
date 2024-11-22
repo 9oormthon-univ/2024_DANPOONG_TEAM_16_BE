@@ -140,6 +140,8 @@ public class CourseService {
         // 순서대로 코스 정보 삭제
         userDisabilityRepository.deleteByCourseId(courseNumber);
 
+        userTripTypeRepository.deleteByCourseId(courseNumber);
+
         userCourseRepository.deleteByCourseId(courseNumber);
 
         if (!courseRepository.existsById(courseNumber)) {

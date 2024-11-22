@@ -29,7 +29,7 @@ public class CourseControllerImpl implements CourseController{
     }
 
     @GetMapping("/ai-rec")
-    public ResponseEntity<AICourseRes> courseCreate(@RequestParam("diability") List<Long> disability,
+    public ResponseEntity<AICourseRes> courseCreate(@RequestParam("disability") List<Long> disability,
             @RequestParam("tripType") List<Long> tripType, @RequestParam("area") Long area, @RequestParam("period") Long period) {
         AICourseRes aiCourseRes = courseService.createAIRecCourse(disability, tripType, area, period);
 

@@ -74,4 +74,12 @@ public class Location {
     @Column(name = "thumbnail_image")
     private String thumbnailImage; // 썸네일 이미지
 
+    public String toPrompt() {
+        return "[contentId : " + getContentId()
+                + ", contentTypeId : " + getContentTypeId()
+                + ", description : " + getDescription()
+                + ", gpsX : " + getGpsX()
+                + ", gpsY : " + getGpsY()
+                + ", addr : " + getAddr() + "]";
+    }
 }

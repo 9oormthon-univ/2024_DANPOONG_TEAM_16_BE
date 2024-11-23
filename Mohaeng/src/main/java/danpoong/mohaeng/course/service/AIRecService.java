@@ -1,8 +1,14 @@
 package danpoong.mohaeng.course.service;
 
-import danpoong.mohaeng.course.dto.AICourseRes;
+import danpoong.mohaeng.area.repository.AreaRepository;
+import danpoong.mohaeng.course.domain.Course;
+import danpoong.mohaeng.course.domain.UserCourse;
 import danpoong.mohaeng.course.dto.ChatGPTRes;
+import danpoong.mohaeng.course.repository.CourseRepository;
+import danpoong.mohaeng.course.repository.UserCourseRepository;
 import danpoong.mohaeng.location.domain.Location;
+import danpoong.mohaeng.location.repository.LocationRepository;
+import danpoong.mohaeng.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,13 +38,19 @@ public class AIRecService {
     private String finetuningModel;
 
     private final RestTemplate restTemplate;
+    private final AreaRepository areaRepository;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
+    private final LocationRepository locationRepository;
+    private final UserCourseRepository userCourseRepository;
 
-    public AICourseRes generateCourse(List<Location> locations, List<Location> restaurants, String area, Long period) {
+    public Long generateCourse(List<Location> locations, List<Location> restaurants, Long area, Long period) {
         Map<String, Object> body = new HashMap<>();
+
         body.put("model", finetuningModel);
         body.put("messages", List.of(Map.of(
                 "role", "user",
-                "content", generatePrompt(locations, restaurants, area, period)
+                "content", generatePrompt(locations, restaurants, areaRepository.findByNumber(area).getName(), period)
         )));
 
         HttpHeaders headers = new HttpHeaders();
@@ -56,13 +68,36 @@ public class AIRecService {
         log.info("AI Response Content: {}", aiResponse);
 
         Map<String, List<Long>> dayWiseContentIds = parseDayWiseContentIds(aiResponse);
-        
-        AICourseRes aiCourseRes = new AICourseRes(area, locations.getFirst().getGpsX(), locations.getFirst().getGpsY(), period);
-        aiCourseRes.setDay1(dayWiseContentIds.getOrDefault("Day 1", List.of()));
-        aiCourseRes.setDay2(dayWiseContentIds.getOrDefault("Day 2", List.of()));
-        aiCourseRes.setDay3(dayWiseContentIds.getOrDefault("Day 3", List.of()));
 
-        return aiCourseRes; // 줄 단위로 결과 반환
+        return saveAICourse(period, area, dayWiseContentIds);
+//        AICourseRes aiCourseRes = new AICourseRes(area, locations.getFirst().getGpsX(), locations.getFirst().getGpsY(), period);
+//        aiCourseRes.setDay1(dayWiseContentIds.getOrDefault("Day 1", List.of()));
+//        aiCourseRes.setDay2(dayWiseContentIds.getOrDefault("Day 2", List.of()));
+//        aiCourseRes.setDay3(dayWiseContentIds.getOrDefault("Day 3", List.of()));
+    }
+
+    private Long saveAICourse(Long period, Long area, Map<String, List<Long>> dayWiseContentIds) {
+        Location location = locationRepository.findLocationByContentId(dayWiseContentIds.getOrDefault("Day 1", List.of()).getFirst());
+
+        Course course = Course.builder()
+                .period(period)
+                .gpsX(location.getGpsX())
+                .gpsY(location.getGpsY())
+                .area(areaRepository.findByNumber(area))
+                .build();
+
+        courseRepository.save(course);
+
+        for (Long day = 1L; day <= 3; day++) {
+            List<Long> locaionList = dayWiseContentIds.getOrDefault("Day " + day, List.of());
+
+            for (Long content : locaionList) {
+                UserCourse userCourse = new UserCourse(day, course, locationRepository.findLocationByContentId(content));
+                userCourseRepository.save(userCourse);
+            }
+        }
+
+        return course.getNumber();
     }
 
     private String generatePrompt(List<Location> locations, List<Location> restaurants, String area, Long period) {

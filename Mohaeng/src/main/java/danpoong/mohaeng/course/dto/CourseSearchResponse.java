@@ -45,6 +45,19 @@ public class CourseSearchResponse {
     @Builder
     @Schema(description = "장소 정보")
     public static class LocationInfo {
+
+        @Schema(description = "장소 GPS X 좌표", example = "37.5665")
+        private double gpsX;
+
+        @Schema(description = "장소 GPS Y 좌표", example = "126.9780")
+        private double gpsY;
+
+        @Schema(description = "콘텐츠 ID", example = "101")
+        private Long contentId;
+
+        @Schema(description = "콘텐츠 타입 ID", example = "12")
+        private Long contentTypeId;
+
         @Schema(description = "장소 이름", example = "경복궁")
         private String name;
 

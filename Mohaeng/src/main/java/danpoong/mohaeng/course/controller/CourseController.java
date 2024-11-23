@@ -26,25 +26,6 @@ public interface CourseController {
     })
     public ResponseEntity<CourseCreateRes> courseCreate(@RequestBody CourseCreateReq courseCreateReq);
 
-//    @Operation(summary = "AI 추천 코스 API", description = "AI 추천 코스를 제공하는 API입니다.")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "201", description = "AI 추천 코스", content = @Content(mediaType = "application/json")),
-//            @ApiResponse(responseCode = "400", description = "null", content = @Content(mediaType = "application/json")),
-//    })
-//    public ResponseEntity<AICourseRes> courseCreate(
-//            @Parameter(description = "사용자의 장애 유형 ID 리스트 (예: 휠체어 접근 가능)", example = "[1, 2, 3]")
-//            @RequestParam(value = "disability", required = false) List<Long> disability,
-//
-//            @Parameter(description = "사용자의 여행 타입 ID 리스트 (예: 자연, 문화 등)", example = "[101, 102]")
-//            @RequestParam(value = "tripType", required = false) List<Long> tripType,
-//
-//            @Parameter(description = "여행할 지역 ID", example = "1")
-//            @RequestParam(value = "area") Long area,
-//
-//            @Parameter(description = "여행 기간 (일 단위)", example = "3")
-//            @RequestParam(value = "period") Long period
-//    ) ;
-
     @Operation(summary = "AI 추천 코스 API", description = "AI 추천 코스를 생성하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "AI 추천 코스 번호", content = @Content(mediaType = "application/json")),

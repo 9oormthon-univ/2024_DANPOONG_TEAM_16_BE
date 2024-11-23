@@ -105,10 +105,9 @@ public class AIRecService {
         prompt.append(" Please use the Tourist and Restaurant lists I provide, which include gpsX and gpsY coordinates, to calculate travel distances and estimated travel times." +
                 " For each day, include exactly 3 places with contentTypeId 12 (e.g., tourist attractions) and 1 place with contentTypeId 39 (e.g., restaurants)." +
                 " Ensure that the travel sequence minimizes travel time (preferably within 15–30 km between places) while providing a logical and enjoyable flow for the day." +
-                " Return the course in the following structure: 'Day 1: [contentId1, contentId2, contentId3, contentId4]', where the content IDs represent the recommended places in the suggested order." +
-                " Make sure the courses are evenly distributed across the days and consider the overall balance and variety of the selected locations." +
-                " Additionally, provide an estimated travel time between each location in parentheses, based on the gpsX and gpsY coordinates provided.");
-
+                " Return the course in the following structure, formatted to match the regex pattern '(Day \\d+): \\[(.*?)\\]':" +
+                " For example, 'Day 1: [contentId1, contentId2, contentId3, contentId4]' and 'Day 2: [contentId5, contentId6, contentId7, contentId8]'." +
+                " Each line should represent one day's recommended locations in the specified order. Ensure the courses are evenly distributed across the days, with a balance and variety of the selected locations.");
         // 프롬프트 캐싱
         // ptu 서비스 - 개인 단계에서 조금 어려움
 

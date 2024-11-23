@@ -1,11 +1,11 @@
 package danpoong.mohaeng.course.service;
 
-import danpoong.mohaeng.area.repository.AreaRepository;
 import danpoong.mohaeng.course.domain.Course;
 import danpoong.mohaeng.course.domain.UserCourse;
 import danpoong.mohaeng.course.dto.*;
 import danpoong.mohaeng.course.repository.CourseRepository;
 import danpoong.mohaeng.course.repository.UserCourseRepository;
+import danpoong.mohaeng.disability.domain.Disability;
 import danpoong.mohaeng.disability.domain.UserDisability;
 import danpoong.mohaeng.disability.repository.DisabilityRepository;
 import danpoong.mohaeng.disability.repository.UserDisabilityRepository;
@@ -63,7 +63,7 @@ public class CourseService {
         for (Long disabilityNum : Disability) {
             UserDisability userDisability = UserDisability.builder()
                     .course(course)
-                    .disability(disabilityRepository.findDisabilitiesByNumber(disabilityNum + 1L))
+                    .disability(disabilityRepository.findDisabilityByNumber(disabilityNum + 1))
                     .build();
 
             userDisabilityRepository.save(userDisability);
@@ -160,7 +160,8 @@ public class CourseService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 코스 정보가 없습니다."));
 
         List<Long> disabilities = course.getDisabilities().stream()
-                .map(UserDisability::getNumber)
+                .map(UserDisability::getDisability)
+                .map(Disability::getNumber)
                 .collect(Collectors.toList());
 
         List<UserCourse> userCourses = userCourseRepository.findByCourseNumber(courseNumber);

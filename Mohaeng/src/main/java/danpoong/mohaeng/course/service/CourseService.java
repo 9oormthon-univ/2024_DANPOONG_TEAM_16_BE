@@ -204,6 +204,10 @@ public class CourseService {
                         UserCourse::getDay,
                         Collectors.mapping(
                                 uc -> CourseSearchResponse.LocationInfo.builder()
+                                        .contentId(uc.getLocation().getContentId())
+                                        .contentTypeId(uc.getLocation().getContentTypeId())
+                                        .gpsX(uc.getLocation().getGpsX())
+                                        .gpsY(uc.getLocation().getGpsY())
                                         .name(uc.getLocation().getContentTitle())
                                         .address(uc.getLocation().getAddr())
                                         .imageUrl(uc.getLocation().getOriginalImage())

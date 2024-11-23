@@ -32,6 +32,12 @@ public class CourseSearchResponse {
     @Schema(description = "장애 유형 ID 리스트", example = "[1, 2]")
     private List<Long> disability;
 
+    @Schema(description = "gpsX", example = "123.456")
+    private Double gpsX;
+
+    @Schema(description = "gpsY", example = "56.789")
+    private Double gpsY;
+
     @Schema(description = "첫째 날 방문 장소 정보", example = "[{name: '경복궁', address: '서울 종로구', imageUrl: 'http://example.com/image.jpg'}]")
     private List<LocationInfo> day1;
 
@@ -70,7 +76,7 @@ public class CourseSearchResponse {
 
     @Builder
     public CourseSearchResponse(Long courseNumber, String courseName, String area, LocalDate startDate, LocalDate endDate,
-                                Long period, List<Long> disability, List<LocationInfo> day1, List<LocationInfo> day2,
+                                Long period, Double gpsX, Double gpsY, List<Long> disability, List<LocationInfo> day1, List<LocationInfo> day2,
                                 List<LocationInfo> day3) {
         this.courseNumber = courseNumber;
         this.courseName = courseName;
@@ -78,6 +84,8 @@ public class CourseSearchResponse {
         this.startDate = startDate;
         this.endDate = endDate;
         this.period = period;
+        this.gpsX = gpsX;
+        this.gpsY = gpsY;
         this.disability = disability;
         this.day1 = day1;
         this.day2 = day2;

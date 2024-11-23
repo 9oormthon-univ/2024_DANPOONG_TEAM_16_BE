@@ -109,6 +109,7 @@ public class AIRecService {
                 " Return the course in the following structure: 'Day 1: [contentId1, contentId2, contentId3, contentId4]', where the content IDs represent the recommended places in order." +
                 " Ensure the courses are evenly distributed across the days and maintain balance and variety in location selection." +
                 " Provide an estimated travel time between each location in parentheses, using gpsX and gpsY coordinates.");
+
         // 프롬프트 캐싱
         // ptu 서비스 - 개인 단계에서 조금 어려움
 

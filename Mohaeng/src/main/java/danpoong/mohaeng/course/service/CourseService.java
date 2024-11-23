@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 public class CourseService {
     private final UserRepository userRepository;
     private final UserCourseRepository userCourseRepository;
-    private final AreaRepository areaRepository;
     private final LocationRepository locationRepository;
     private final DisabilityRepository disabilityRepository;
     private final TripTypeRepository tripTypeRepository;
@@ -57,8 +56,6 @@ public class CourseService {
         course.setUser(userRepository.findUserByUuid(courseCreateReq.getUuid()));
 
         courseRepository.save(course);
-        log.info("코스 정보 : {}", course);
-
         return course;
     }
 
@@ -70,7 +67,6 @@ public class CourseService {
                     .build();
 
             userDisabilityRepository.save(userDisability);
-            log.info("코스 장애 정보 : {}", userDisability);
         }
     }
 
@@ -82,7 +78,6 @@ public class CourseService {
                     .build();
 
             userTripTypeRepository.save(userTripType);
-            log.info("코스 여행 정보 : {}", userTripType);
         }
     }
 
@@ -109,22 +104,6 @@ public class CourseService {
                         .map(userCourse -> userCourse.getLocation().getContentId())
                         .toList())
                 .build();
-    }
-
-    private void crateUserCourse(Course course, List<Long> locations, Long day) {
-        if (locations == null)
-            return;
-
-        for (Long location : locations) {
-            UserCourse userCourse = UserCourse.builder()
-                    .course(course)
-                    .day(day)
-                    .location(locationRepository.findLocationByContentId(location))
-                    .build();
-
-            userCourseRepository.save(userCourse);
-            log.info("코스 관광지 정보 : {}", userCourse.getLocation().getContentTitle());
-        }
     }
 
     public Long createAIRecCourse(AICourseReq aiCourseReq) {

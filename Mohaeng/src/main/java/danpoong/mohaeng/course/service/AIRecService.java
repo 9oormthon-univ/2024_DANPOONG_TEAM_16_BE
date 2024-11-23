@@ -39,7 +39,6 @@ public class AIRecService {
 
     private final RestTemplate restTemplate;
     private final AreaRepository areaRepository;
-    private final UserRepository userRepository;
     private final CourseRepository courseRepository;
     private final LocationRepository locationRepository;
     private final UserCourseRepository userCourseRepository;
@@ -70,10 +69,6 @@ public class AIRecService {
         Map<String, List<Long>> dayWiseContentIds = parseDayWiseContentIds(aiResponse);
 
         return saveAICourse(period, area, dayWiseContentIds);
-//        AICourseRes aiCourseRes = new AICourseRes(area, locations.getFirst().getGpsX(), locations.getFirst().getGpsY(), period);
-//        aiCourseRes.setDay1(dayWiseContentIds.getOrDefault("Day 1", List.of()));
-//        aiCourseRes.setDay2(dayWiseContentIds.getOrDefault("Day 2", List.of()));
-//        aiCourseRes.setDay3(dayWiseContentIds.getOrDefault("Day 3", List.of()));
     }
 
     private Long saveAICourse(Long period, Long area, Map<String, List<Long>> dayWiseContentIds) {

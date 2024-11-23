@@ -70,12 +70,9 @@ public class AIRecService {
     }
 
     private Long saveAICourse(Long period, Long area, Map<String, List<Long>> dayWiseContentIds) {
-        Location location = locationRepository.findLocationByContentId(dayWiseContentIds.getOrDefault("Day 1", List.of()).getFirst());
 
         Course course = Course.builder()
                 .period(period)
-                .gpsX(location.getGpsX())
-                .gpsY(location.getGpsY())
                 .area(areaRepository.findByNumber(area))
                 .build();
 
@@ -92,6 +89,10 @@ public class AIRecService {
             }
         }
 
+        List<UserCourse> userCourseList = userCourseRepository.findByCourseNumber(course.getNumber());
+        course.setGpsX(userCourseList.getFirst().getLocation().getGpsX());
+        course.setGpsY(userCourseList.getFirst().getLocation().getGpsY());
+
         return course.getNumber();
     }
 
@@ -99,16 +100,15 @@ public class AIRecService {
 
         StringBuilder prompt = new StringBuilder();
         Long tripPeriod = period + 1L;
-        String defaultPrompt = "I want to receive a detailed travel course recommendation for " + tripPeriod + " days in " + area + ".";
+        String defaultPrompt = "I want to receive a travel course recommendation for " + tripPeriod + " days in " + area + ".";
 
         prompt.append(defaultPrompt);
-        prompt.append(" Please use the Tourist and Restaurant lists I provide, which include gpsX and gpsY coordinates, to calculate travel distances and estimated travel times." +
-                " For each day, include exactly 3 places with contentTypeId 12 (e.g., tourist attractions) and 1 place with contentTypeId 39 (e.g., restaurants)." +
-                " Ensure that the travel sequence minimizes travel time (preferably within 15–30 km between places) while providing a logical and enjoyable flow for the day." +
-                " Return the course in the following structure: 'Day 1: [contentId1, contentId2, contentId3, contentId4]', where the content IDs represent the recommended places in the suggested order." +
-                " Make sure the courses are evenly distributed across the days and consider the overall balance and variety of the selected locations." +
-                " Additionally, provide an estimated travel time between each location in parentheses, based on the gpsX and gpsY coordinates provided.");
-
+        prompt.append("Use the Tourist and Restaurant lists I provide, which include gpsX and gpsY coordinates, to calculate travel distances and estimated travel times." +
+                " For each day, include exactly 3 places with contentTypeId 12 (tourist attractions) and 1 place with contentTypeId 39 (restaurants)." +
+                " Ensure that the travel sequence minimizes travel time (preferably within 15–30 km between places) and provides a logical flow." +
+                " Return the course in the following structure: 'Day 1: [contentId1, contentId2, contentId3, contentId4]', where the content IDs represent the recommended places in order." +
+                " Ensure the courses are evenly distributed across the days and maintain balance and variety in location selection." +
+                " Provide an estimated travel time between each location in parentheses, using gpsX and gpsY coordinates.");
         // 프롬프트 캐싱
         // ptu 서비스 - 개인 단계에서 조금 어려움
 

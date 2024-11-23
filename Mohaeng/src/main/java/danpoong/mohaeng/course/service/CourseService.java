@@ -204,6 +204,7 @@ public class CourseService {
                         )
                 ));
 
+        Location location = locationRepository.findLocationByContentId(dayWiseLocations.getOrDefault(1L, List.of()).getFirst().getContentId());
 
         return CourseSearchResponse.builder()
                 .courseNumber(course.getNumber())
@@ -212,6 +213,8 @@ public class CourseService {
                 .startDate(course.getStartDate())
                 .endDate(course.getEndDate())
                 .period(course.getPeriod())
+                .gpsX(location.getGpsX())
+                .gpsY(location.getGpsY())
                 .disability(disabilities)
                 .day1(dayWiseLocations.getOrDefault(1L, List.of()))
                 .day2(dayWiseLocations.getOrDefault(2L, List.of()))

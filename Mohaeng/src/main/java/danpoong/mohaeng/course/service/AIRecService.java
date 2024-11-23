@@ -86,6 +86,8 @@ public class AIRecService {
 
             for (Long content : locaionList) {
                 UserCourse userCourse = new UserCourse(day, course, locationRepository.findLocationByContentId(content));
+                if (userCourse.getLocation() == null)
+                    continue;
                 userCourseRepository.save(userCourse);
             }
         }
@@ -100,12 +102,12 @@ public class AIRecService {
         String defaultPrompt = "I want to receive a detailed travel course recommendation for " + tripPeriod + " days in " + area + ".";
 
         prompt.append(defaultPrompt);
-        prompt.append("I want to receive a detailed travel course recommendation for " + tripPeriod + " days in " + area + ". " + defaultPrompt +
-                " Please use the Tourist and Restaurant lists I provide, which include gpsX and gpsY coordinates, to calculate travel distances and estimated travel times." +
+        prompt.append(" Please use the Tourist and Restaurant lists I provide, which include gpsX and gpsY coordinates, to calculate travel distances and estimated travel times." +
                 " For each day, include exactly 3 places with contentTypeId 12 (e.g., tourist attractions) and 1 place with contentTypeId 39 (e.g., restaurants)." +
-                " When creating the course, ensure that the travel sequence minimizes travel time while providing a logical and enjoyable flow for the day." +
+                " Ensure that the travel sequence minimizes travel time (preferably within 15–30 km between places) while providing a logical and enjoyable flow for the day." +
                 " Return the course in the following structure: 'Day 1: [contentId1, contentId2, contentId3, contentId4]', where the content IDs represent the recommended places in the suggested order." +
-                " Make sure the courses are evenly distributed across the days and consider the overall balance and variety of the selected locations.");
+                " Make sure the courses are evenly distributed across the days and consider the overall balance and variety of the selected locations." +
+                " Additionally, provide an estimated travel time between each location in parentheses, based on the gpsX and gpsY coordinates provided.");
 
         // 프롬프트 캐싱
         // ptu 서비스 - 개인 단계에서 조금 어려움

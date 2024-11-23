@@ -8,7 +8,6 @@ import danpoong.mohaeng.course.repository.CourseRepository;
 import danpoong.mohaeng.course.repository.UserCourseRepository;
 import danpoong.mohaeng.location.domain.Location;
 import danpoong.mohaeng.location.repository.LocationRepository;
-import danpoong.mohaeng.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +48,7 @@ public class AIRecService {
         body.put("model", finetuningModel);
         body.put("messages", List.of(Map.of(
                 "role", "user",
+                "temperature", 0,
                 "content", generatePrompt(locations, restaurants, areaRepository.findByNumber(area).getName(), period)
         )));
 
@@ -59,8 +59,6 @@ public class AIRecService {
         // OpenAI API 호출
         ResponseEntity<ChatGPTRes> response = restTemplate.postForEntity(
                 openAiApiUrl, new HttpEntity<>(body, headers), ChatGPTRes.class);
-
-        log.info("Full OpenAI API Response: {}", response.getBody());
 
         // 응답 처리
         String aiResponse = response.getBody().getChoice().getFirst().getMessage().getContent();
@@ -99,12 +97,18 @@ public class AIRecService {
 
         StringBuilder prompt = new StringBuilder();
         Long tripPeriod = period + 1L;
+        String defaultPrompt = "I want to receive a detailed travel course recommendation for " + tripPeriod + " days in " + area + ".";
 
-        String defaultPrompt = "나는 " + tripPeriod + "일 동안 " + area + "를 여행할 코스를 추천 받고 싶어. ";
         prompt.append(defaultPrompt);
-        prompt.append("내가 보내는 Tourist, Restaurant 리스트에서 장소의 gpsX, gpsY를 기반으로 이동 거리와 시간을 고려해서 코스를 추천해줘. ");
-        prompt.append("하루에 contentTypeId가 12인 장소 3곳, contentTypeId가 39인 장소 1곳을 추천해줘. ");
-        prompt.append("코스를 추천할 때 Day 1:[contentId 리스트] 와 같은 구조로 제공해줘.");
+        prompt.append("I want to receive a detailed travel course recommendation for " + tripPeriod + " days in " + area + ". " + defaultPrompt +
+                " Please use the Tourist and Restaurant lists I provide, which include gpsX and gpsY coordinates, to calculate travel distances and estimated travel times." +
+                " For each day, include exactly 3 places with contentTypeId 12 (e.g., tourist attractions) and 1 place with contentTypeId 39 (e.g., restaurants)." +
+                " When creating the course, ensure that the travel sequence minimizes travel time while providing a logical and enjoyable flow for the day." +
+                " Return the course in the following structure: 'Day 1: [contentId1, contentId2, contentId3, contentId4]', where the content IDs represent the recommended places in the suggested order." +
+                " Make sure the courses are evenly distributed across the days and consider the overall balance and variety of the selected locations.");
+
+        // 프롬프트 캐싱
+        // ptu 서비스 - 개인 단계에서 조금 어려움
 
         // Tourist 리스트 추가
         prompt.append("Tourist : [");

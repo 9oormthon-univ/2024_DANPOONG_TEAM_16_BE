@@ -29,11 +29,8 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
 
         Long locationId = 12L;
 
-        // 관광지만 선택
-        conditions.and(addContentTypeConditions(locationId));
-
-        // 지역 조건 추가
-        conditions.and(addAreaConditions(area));
+        // 관광지만 선택 및 지역 조건 추가
+        conditions.and(addContentTypeAndAreaConditions(locationId, area));
 
         // 장애 정보에 따른 조건 추가
         conditions.and(addDisabilityConditions(disabilities));
@@ -58,11 +55,8 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
         QLocation l = QLocation.location;
         Long restaurantId = 39L;
 
-        // 관광지만 선택
-        conditions.and(addContentTypeConditions(restaurantId));
-
-        // 지역 조건 추가
-        conditions.and(addAreaConditions(area));
+        // 관광지만 선택 및 지역 조건 추가
+        conditions.and(addContentTypeAndAreaConditions(restaurantId, area));
 
         var query = queryFactory.selectFrom(l)
                 .where(conditions);
@@ -73,22 +67,14 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
         return new HashSet<>(resultList);  // 중복 제거를 위해 Set으로 변환
     }
 
-    private BooleanBuilder addContentTypeConditions(Long contentType) {
-        BooleanBuilder contentTypeConditions = new BooleanBuilder();
+    private BooleanBuilder addContentTypeAndAreaConditions(Long contentType, Long area) {
+        BooleanBuilder contentTypeAndAreaConditions = new BooleanBuilder();
 
         QLocation l = QLocation.location;
-        contentTypeConditions.and(l.contentTypeId.eq(contentType));
+        contentTypeAndAreaConditions.and(l.contentTypeId.eq(contentType));
+        contentTypeAndAreaConditions.and(l.area.number.eq(area));
 
-        return contentTypeConditions;
-    }
-
-    private BooleanBuilder addAreaConditions(Long area) {
-        BooleanBuilder areaConditions = new BooleanBuilder();
-
-        QLocation l = QLocation.location;
-        areaConditions.and(l.area.number.eq(area));
-
-        return areaConditions;
+        return contentTypeAndAreaConditions;
     }
 
     private BooleanBuilder addDisabilityConditions(List<Long> disabilities) {

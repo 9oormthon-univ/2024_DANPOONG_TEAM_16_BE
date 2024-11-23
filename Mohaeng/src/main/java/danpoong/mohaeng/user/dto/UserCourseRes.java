@@ -26,12 +26,20 @@ public class UserCourseRes {
     @Schema(description = "코스 종료 날짜", example = "2024-01-07")
     private LocalDate endDate;
 
+    @Schema(description = "여행 기간", example = "1")
+    private Long period;
+
+    @Schema(description = "원본 이미지", example = "http://tong.visitkorea.or.kr/cms/resource/21/2657021_image2_1.jpg")
+    private String originalImage;
+
     @Builder
-    public UserCourseRes(Course course) {
+    public UserCourseRes(Course course, String originalImage) {
         this.courseNumber = course.getNumber();
         this.courseName = course.getName();
         this.area = course.getArea().getName();
         this.startDate = course.getStartDate();
         this.endDate = course.getEndDate();
+        this.period = course.getPeriod();
+        this.originalImage = originalImage;
     }
 }

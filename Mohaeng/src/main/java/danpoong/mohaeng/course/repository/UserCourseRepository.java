@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public interface UserCourseRepository extends JpaRepository<UserCourse, Long> {
     UserCourse findUserCourseByCourseAndLocation(Course course, Location location);
-    List<UserCourse> findUserCoursesByCourse(Course course);
+    UserCourse findFirstByCourseAndDay(Course course, Long day);
     @Transactional
     @Modifying
     @Query("DELETE FROM UserCourse uc WHERE uc.course.number = :courseId")

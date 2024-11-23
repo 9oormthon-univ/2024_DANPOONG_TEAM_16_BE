@@ -63,7 +63,7 @@ public class CourseService {
         for (Long disabilityNum : Disability) {
             UserDisability userDisability = UserDisability.builder()
                     .course(course)
-                    .disability(disabilityRepository.findDisabilityByNumber(disabilityNum + 1))
+                    .disability(disabilityRepository.findDisabilityByNumber(disabilityNum))
                     .build();
 
             userDisabilityRepository.save(userDisability);
@@ -74,7 +74,7 @@ public class CourseService {
         for (Long tripTypeNum : tripType) {
             UserTripType userTripType = UserTripType.builder()
                     .course(course)
-                    .tripType(tripTypeRepository.findTripTypeByNumber(tripTypeNum + 1))
+                    .tripType(tripTypeRepository.findTripTypeByNumber(tripTypeNum))
                     .build();
 
             userTripTypeRepository.save(userTripType);

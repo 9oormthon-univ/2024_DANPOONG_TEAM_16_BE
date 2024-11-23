@@ -44,6 +44,12 @@ public interface CourseController {
 //            @Parameter(description = "여행 기간 (일 단위)", example = "3")
 //            @RequestParam(value = "period") Long period
 //    ) ;
+
+    @Operation(summary = "AI 추천 코스 API", description = "AI 추천 코스를 생성하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "AI 추천 코스 번호", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "null", content = @Content(mediaType = "application/json")),
+    })
     public ResponseEntity<Long> courseCreate(@RequestBody AICourseReq aiCourseReq);
 
 }

@@ -1,6 +1,5 @@
 package danpoong.mohaeng.course.service;
 
-import danpoong.mohaeng.area.domain.Area;
 import danpoong.mohaeng.area.repository.AreaRepository;
 import danpoong.mohaeng.course.domain.Course;
 import danpoong.mohaeng.course.domain.UserCourse;
@@ -15,14 +14,11 @@ import danpoong.mohaeng.location.repository.LocationRepository;
 import danpoong.mohaeng.trip_type.domain.UserTripType;
 import danpoong.mohaeng.trip_type.repository.TripTypeRepository;
 import danpoong.mohaeng.trip_type.repository.UserTripTypeRepository;
-import danpoong.mohaeng.user.domain.User;
 import danpoong.mohaeng.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,36 +39,22 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final AIRecService aiRecService;
 
-
-
     public CourseCreateRes createTrip(CourseCreateReq courseCreateReq) {
         // 코스 정보 생성
         Course course = createCourse(courseCreateReq);
-
-        // 코스 장애 정보 생성
-        createCourseDisability(course, courseCreateReq.getDisability());
-
-        // 코스 여행 타입 정보 생성
-        createCourseTripType(course, courseCreateReq.getTripType());
 
         return crateCourseRes(course, courseCreateReq);
     }
 
     private Course createCourse(CourseCreateReq courseCreateReq) {
-        User user = userRepository.findUserByUuid(courseCreateReq.getUuid());
-        Area area = areaRepository.findByNumber(courseCreateReq.getArea());
-        LocalDate endDate = courseCreateReq.getStartDate().plusDays(courseCreateReq.getPeriod());
+        Course course = courseRepository.findCourseByNumber(courseCreateReq.getCourseNumber());
+        Long period = courseRepository.findCourseByNumber(courseCreateReq.getCourseNumber()).getPeriod();
 
-        Course course = Course.builder()
-                .name(courseCreateReq.getCourseName())
-                .startDate(courseCreateReq.getStartDate())
-                .endDate(endDate)
-                .period(courseCreateReq.getPeriod())
-                .gpsX(courseCreateReq.getGpsX())
-                .gpsY(courseCreateReq.getGpsY())
-                .user(user)
-                .area(area)
-                .build();
+        course.setName(courseCreateReq.getCourseName());
+        course.setStartDate(courseCreateReq.getStartDate());
+        course.setEndDate(courseCreateReq.getStartDate().plusDays(period));
+        course.setPeriod(period);
+        course.setUser(userRepository.findUserByUuid(courseCreateReq.getUuid()));
 
         courseRepository.save(course);
         log.info("코스 정보 : {}", course);
@@ -109,20 +91,23 @@ public class CourseService {
         Long day2 = 2L;
         Long day3 = 3L;
 
-        // 코스 내 관광지 정보 생성
-        crateUserCourse(course, courseCreateReq.getDay1(), day1);
-        crateUserCourse(course, courseCreateReq.getDay2(), day2);
-        crateUserCourse(course, courseCreateReq.getDay3(), day3);
-
         return CourseCreateRes.builder()
                 .uuid(courseCreateReq.getUuid())
                 .course(course)
-                .disability(courseCreateReq.getDisability())
+                .disability(userDisabilityRepository.findAllByCourse(course).stream()
+                        .map(UserDisability::getNumber)
+                        .toList())
                 .startDate(course.getStartDate())
                 .endDate(course.getEndDate())
-                .day1(courseCreateReq.getDay1())
-                .day2(courseCreateReq.getDay2())
-                .day3(courseCreateReq.getDay3())
+                .day1(userCourseRepository.findAllByCourseAndDay(course, day1).stream()
+                        .map(userCourse -> userCourse.getLocation().getContentId())
+                        .toList())
+                .day2(userCourseRepository.findAllByCourseAndDay(course, day2).stream()
+                        .map(userCourse -> userCourse.getLocation().getContentId())
+                        .toList())
+                .day3(userCourseRepository.findAllByCourseAndDay(course, day3).stream()
+                        .map(userCourse -> userCourse.getLocation().getContentId())
+                        .toList())
                 .build();
     }
 
@@ -196,7 +181,7 @@ public class CourseService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 코스 정보가 없습니다."));
 
         List<Long> disabilities = course.getDisabilities().stream()
-                .map(disability -> disability.getNumber())
+                .map(UserDisability::getNumber)
                 .collect(Collectors.toList());
 
         List<UserCourse> userCourses = userCourseRepository.findByCourseNumber(courseNumber);

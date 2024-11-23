@@ -14,7 +14,7 @@ public class CourseControllerImpl implements CourseController{
 
     private final CourseService courseService;
 
-    @PostMapping("")
+    @PatchMapping("")
     public ResponseEntity<CourseCreateRes> courseCreate(@RequestBody CourseCreateReq courseCreateReq) {
         CourseCreateRes courseCreateRes = courseService.createTrip(courseCreateReq);
 

@@ -25,4 +25,6 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, Long> {
 
     @Query("SELECT uc FROM UserCourse uc WHERE uc.course.number = :courseNumber")
     List<UserCourse> findByCourseNumber(@Param("courseNumber") Long courseNumber);
+
+    List<UserCourse> findAllByCourseAndDay(Course course, Long day);
 }
